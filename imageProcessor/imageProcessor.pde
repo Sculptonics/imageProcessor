@@ -25,16 +25,18 @@ Slider sizeSlider;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Clipboard;
+import processing.video.*;
 
 // image
 PImage image;
-PGraphics brushLayer, hiddenLayer;
+Movie video;
+PGraphics brushLayer, hiddenLayer, videoLayer;
 int sizeX, sizeY;
 int imageWidth = 100;
 int imageXoffs = 0, imageYoffs = 0;
 int imageXadd = 0, imageYadd = 0;
 int imageXresult = 0, imageYresult = 0;
-String imagePath;
+String videoPath;
 int centerX;
 int centerY;
 
@@ -80,10 +82,13 @@ void setup() {
   smooth();
   noStroke();
 
-  imagePath = "noImage.jpg";
-  image = loadImage(imagePath);
-  imageWidth = image.width;
-
+  videoPath = "D:/Documents/Processing/MovietoImage/data/cat.mov";
+  video = new Movie(this, videoPath);
+  video.play();
+  video.jump(2);
+  video.read();
+  imageWidth = video.width;
+  println(imageWidth);
   GUIinit();
   centerX = offsetWidth+150;
   centerY = height/2;
@@ -91,6 +96,7 @@ void setup() {
   rectY = height/2;
   brushLayer = createGraphics(width, height);
   hiddenLayer = createGraphics(width, height);
+  videoLayer = createGraphics(width, height);
 }
 
 void draw() {

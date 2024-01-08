@@ -5,11 +5,11 @@ void GUIinit() {
 
   // ======== EDITOR ========
 
-  cp5.addButton("load_image").setCaptionLabel("OPEN  IMAGE").setPosition(10, 10).setSize(100, 25);
+  cp5.addButton("load_video").setCaptionLabel("OPEN  VIDEO").setPosition(10, 10).setSize(100, 25);
 
   cp5.addButton("save_image").setCaptionLabel("SAVE  IMAGE").setPosition(120, 10).setSize(100, 25);
 
-  sizeSlider = cp5.addSlider("img_width").setCaptionLabel("IMG  SIZE").setPosition(10, 40).setSize(210, 25).setRange(2, 1000).setValue(64).setNumberOfTickMarks(998-1).showTickMarks(false);
+  sizeSlider = cp5.addSlider("img_width").setCaptionLabel("IMG  SIZE").setPosition(10, 40).setSize(210, 25).setRange(2, 1000).setValue(320).setNumberOfTickMarks(998-1).showTickMarks(false);
   cp5.getController("img_width").getCaptionLabel().setPaddingX(-40);
 
   cp5.addSlider("img_rotate").setCaptionLabel("ROTATE").setPosition(10, 70).setSize(210, 25).setRange(0, 360).setValue(0);

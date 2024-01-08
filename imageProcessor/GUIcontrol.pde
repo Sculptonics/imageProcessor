@@ -1,6 +1,6 @@
 // ================ MOVE ==================
 
-void load_image() {
+void load_video() {
   selectInput("Select a file to process:", "fileSelected");
   changeFlag = true;
 }
@@ -9,9 +9,10 @@ void fileSelected(File selection) {
   if (selection == null) {
     println("Not selected");
   } else {
-    imagePath = selection.getAbsolutePath();
-    println("Select: " + imagePath);
-    image = loadImage(imagePath);
+    videoPath = selection.getAbsolutePath();
+    println("Select: " + videoPath);
+    video = new Movie(this, videoPath);
+    video.play();
     imageWidth = 256;
     image.resize(imageWidth, 0);    
     sizeSlider.setValue(128);
@@ -23,7 +24,7 @@ void fileSelected(File selection) {
 }
 
 void save_image() {
-  PImage image = loadImage(imagePath);  
+  PImage image = loadImage(videoPath);  
   image = filtered(image);
   image.save("outputImage.bmp");
 }

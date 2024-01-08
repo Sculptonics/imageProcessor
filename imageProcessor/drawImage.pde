@@ -1,5 +1,6 @@
 // применение фильтров
-PImage filtered(PImage image) {  
+PImage filtered(PImage image) { 
+  println(imageWidth);
   image.resize(imageWidth, 0);
   ContrastAndBrightness(image, image, contrastValue, brightnessValue);
   if (thresholdState) image.filter(THRESHOLD, thresholdValue);
@@ -44,8 +45,9 @@ void drawImage() {
   }
 
   if (changeFlag) {
-    image = loadImage(imagePath);
-    image = filtered(image);
+    video = new Movie(this, videoPath);
+    video.play();
+    drawvideo();
     brightnessValue = sliderBC.getArrayValue()[0];
     contrastValue = sliderBC.getArrayValue()[1];
 
@@ -55,12 +57,12 @@ void drawImage() {
     imageXoffs = imageXresult+imageXadd+draggedXadd;
     imageYoffs = imageYresult+imageYadd+draggedYadd;
 
-    imgX = centerX - image.width/2 + imageXoffs;
-    imgY = centerY - image.height/2 + imageYoffs; 
+    imgX = centerX - video.width/2 + imageXoffs;
+    imgY = centerY - video.height/2 + imageYoffs; 
     changeFlag = false;
   }
   background(255);
-
+ 
   // рисуем картинку
   hiddenLayer.beginDraw();
   hiddenLayer.background(255);
@@ -68,14 +70,15 @@ void drawImage() {
   hiddenLayer.pushMatrix();
   hiddenLayer.translate(width/2, height/2);
   hiddenLayer.rotate(rotAngle);
-  hiddenLayer.image(image, 0, 0);
+  if (image!= null)
+    hiddenLayer.image(image, 0, 0);
   hiddenLayer.endDraw();    
   hiddenLayer.popMatrix();
 
   // заливка от дисера
   if (ditherState) {
     noStroke();
-    fill(255);
+    fill(155);
     rect(0, 0, width, imgY);
     rect(0, 0, imgX, height);
   }
@@ -122,6 +125,34 @@ void drawImage() {
     strokeWeight(2);
     rect(rectX - rectSize*resultWidth/2, rectY - rectSize*resultHeight/2, rectSize*resultWidth, rectSize*resultHeight);
   }
+}
+int hag = 0;
+void keyPressed() {
+  if (key == CODED) {
+    if (keyCode == RIGHT) {
+      hag++;
+    } else if (keyCode == LEFT) {
+      hag--;
+    }
+    video.jump(hag/video.frameRate);
+    video.read();
+    drawvideo();
+  }
+}
+
+void drawvideo(){
+    // рисуем картинку
+  videoLayer.beginDraw();
+  videoLayer.background(255);
+  videoLayer.imageMode(CENTER);
+  videoLayer.pushMatrix();
+  videoLayer.translate(width/2, height/2);
+  videoLayer.rotate(rotAngle);
+  videoLayer.image(video, 0, 0);
+  videoLayer.endDraw();    
+  videoLayer.popMatrix();
+  image = videoLayer.get();
+  image = filtered(image);
 }
 
 // ================== ФИЛЬТР ЯРКОСТЬ/КОНТРАСТ ==================
