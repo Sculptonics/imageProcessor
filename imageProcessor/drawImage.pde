@@ -1,6 +1,5 @@
-// применение фильтров
+// применение фильтров //<>//
 PImage filtered(PImage image) { 
-  println(imageWidth);
   image.resize(imageWidth, 0);
   ContrastAndBrightness(image, image, contrastValue, brightnessValue);
   if (thresholdState) image.filter(THRESHOLD, thresholdValue);
@@ -45,8 +44,9 @@ void drawImage() {
   }
 
   if (changeFlag) {
-    video = new Movie(this, videoPath);
-    video.play();
+    //video = new Movie(this, videoPath);
+    //video.jump(hag/video.frameRate);
+    //video.read();
     drawvideo();
     brightnessValue = sliderBC.getArrayValue()[0];
     contrastValue = sliderBC.getArrayValue()[1];
@@ -62,14 +62,14 @@ void drawImage() {
     changeFlag = false;
   }
   background(255);
- 
+
   // рисуем картинку
   hiddenLayer.beginDraw();
   hiddenLayer.background(255);
   hiddenLayer.imageMode(CENTER);
   hiddenLayer.pushMatrix();
   hiddenLayer.translate(width/2, height/2);
-  hiddenLayer.rotate(rotAngle);
+  //hiddenLayer.rotate(rotAngle);
   if (image!= null)
     hiddenLayer.image(image, 0, 0);
   hiddenLayer.endDraw();    
@@ -126,22 +126,29 @@ void drawImage() {
     rect(rectX - rectSize*resultWidth/2, rectY - rectSize*resultHeight/2, rectSize*resultWidth, rectSize*resultHeight);
   }
 }
-int hag = 0;
+int index = 0;
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == RIGHT) {
-      hag++;
+      index++;
+      print("->");
     } else if (keyCode == LEFT) {
-      hag--;
+      index--;
+      print("<-");
     }
-    video.jump(hag/video.frameRate);
-    video.read();
-    drawvideo();
+    index = constrain(index, 0, int(video.duration()*video.frameRate));
+    println(index);
+    cp5.getController("time_line").setValue(index);
   }
 }
 
-void drawvideo(){
-    // рисуем картинку
+void drawvideo() {
+  if (video.available()) {
+    video.read();
+    println("good");
+  }
+  else println("ERROR");
+  // рисуем картинку
   videoLayer.beginDraw();
   videoLayer.background(255);
   videoLayer.imageMode(CENTER);
@@ -153,7 +160,16 @@ void drawvideo(){
   videoLayer.popMatrix();
   image = videoLayer.get();
   image = filtered(image);
+  //image = getFrame(video, index);
 }
+
+PImage getFrame (Movie movie, int index) {
+  movie.speed(0);
+  movie.jump(index / video.frameRate);
+  movie.read();
+  return filtered(movie.get());
+}
+
 
 // ================== ФИЛЬТР ЯРКОСТЬ/КОНТРАСТ ==================
 // https://forum.processing.org/one/topic/increase-contrast-of-an-image.html

@@ -12,6 +12,9 @@ void fileSelected(File selection) {
     videoPath = selection.getAbsolutePath();
     println("Select: " + videoPath);
     video = new Movie(this, videoPath);
+    //cp5.getController("time_line").setMax(video.duration()*video.frameRate);
+    cp5.addSlider("time_line").setCaptionLabel("TIME LINE").setPosition(65, 390).setSize(155, 25).setRange(1, video.duration()*video.frameRate).setValue(1).setNumberOfTickMarks(int(video.duration()*video.frameRate));
+    cp5.getController("time_line").getCaptionLabel().setPaddingX(-55);
     video.play();
     imageWidth = 256;
     image.resize(imageWidth, 0);    
@@ -88,15 +91,21 @@ void p_value(int val) {
   changeFlag = true;
 }
 
-void brush(boolean state) {
-  changeFlag = true;  
-  brushState = !state;
-  brushLayer = createGraphics(width, height);
+void play_video() {
+  play = !play;
+  if (play)
+    video.play();
+  else 
+    video.pause();
+  println("play=", play);
 }
 
-void brush_size(int val) {
-  brushSize = val;
-  changeFlag = true;
+void time_line(int val) {
+  index = val;
+  video.jump(index/video.frameRate);
+  drawvideo();
+  println("index=", index);
+  //changeFlag = true;
 }
 
 // ============== ENCODING ==============

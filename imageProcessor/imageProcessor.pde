@@ -39,7 +39,7 @@ int imageXresult = 0, imageYresult = 0;
 String videoPath;
 int centerX;
 int centerY;
-
+boolean play;
 // settings
 float rotAngle = 0;
 boolean thresholdState = false;
@@ -84,12 +84,14 @@ void setup() {
 
   videoPath = "D:/Documents/Processing/MovietoImage/data/cat.mov";
   video = new Movie(this, videoPath);
+  video.loop();
   video.play();
-  video.jump(2);
   video.read();
   imageWidth = video.width;
-  println(imageWidth);
+  
   GUIinit();
+  cp5.addSlider("time_line").setCaptionLabel("TIME LINE").setPosition(65, 390).setSize(155, 25).setRange(1, video.duration()*video.frameRate).setValue(1).setNumberOfTickMarks(int(video.duration()*video.frameRate));
+  cp5.getController("time_line").getCaptionLabel().setPaddingX(-55);
   centerX = offsetWidth+150;
   centerY = height/2;
   rectX = (offsetWidth + width) / 2;
@@ -104,6 +106,7 @@ void draw() {
   else showHelp();  // подсказки
   drawGUI();        // выводим интерфейс
   //println(mouseX + " " + mouseY);
+  if (play) drawvideo();
 }
 
 // ===============================================================
