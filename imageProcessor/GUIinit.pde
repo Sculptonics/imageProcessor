@@ -58,7 +58,7 @@ void GUIinit() {
   cp5.addSlider("p_value").setCaptionLabel("VALUE").setPosition(65, 340).setSize(155, 25).setRange(2, 10).setValue(10).setNumberOfTickMarks(9);
   cp5.getController("p_value").getCaptionLabel().setPaddingX(-30);
 
-  t1 = cp5.addToggle("play_video").setPosition(10, 390).setSize(45, 25);
+  t1 = cp5.addToggle("play_video").setPosition(10, 390).setSize(45, 25).setLabel("play");
   t1.getCaptionLabel().align(CENTER, CENTER);
 
   s1 = cp5.addSlider("time_line")

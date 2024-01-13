@@ -45,9 +45,10 @@ void drawImage() {
 
   if (changeFlag) {
     //video = new Movie(this, videoPath);
-    //video.jump(hag/video.frameRate);
-    //video.read();
+    video.jump(time_line/video.frameRate);
+    video.play();
     drawvideo();
+    video.pause();
     brightnessValue = sliderBC.getArrayValue()[0];
     contrastValue = sliderBC.getArrayValue()[1];
 
@@ -151,7 +152,9 @@ void drawvideo() {
     video.read();
     println("good");
   }
-  else println("ERROR");
+  else {println("ERROR");
+  return;
+  }
   // рисуем картинку
   videoLayer.beginDraw();
   videoLayer.background(255);

@@ -88,6 +88,7 @@ void setup() {
   video = new Movie(this, videoPath);
   video.loop();
   video.play();
+  //drawvideo();
   video.read();
   imageWidth = video.width;
   
@@ -115,7 +116,7 @@ void draw() {
     //cp5.getController("time_line").setValue(time_line);
   }
   else {
-
+    video.pause();
   }
 }
 
