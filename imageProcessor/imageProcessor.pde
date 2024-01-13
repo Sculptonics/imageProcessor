@@ -19,7 +19,8 @@ int maxHeight = 650;
 import controlP5.*;
 ControlP5 cp5;
 Slider2D sliderXY, sliderBC;
-Slider sizeSlider;
+Slider sizeSlider, s1, s2;
+Toggle t1;
 
 // clipboard
 import java.awt.Toolkit;
@@ -74,9 +75,10 @@ boolean mouseState = false;
 int draggedX, draggedY;
 int draggedXadd, draggedYadd;
 boolean dimension = false;
+int time_line;
 
 void setup() {  
-  surface.setTitle("imageProcessor v1.5");
+  surface.setTitle("imageProcessor v2.0");
   size(1200, 700);
   frameRate(60);
   smooth();
@@ -90,8 +92,9 @@ void setup() {
   imageWidth = video.width;
   
   GUIinit();
-  cp5.addSlider("time_line").setCaptionLabel("TIME LINE").setPosition(65, 390).setSize(155, 25).setRange(1, video.duration()*video.frameRate).setValue(1).setNumberOfTickMarks(int(video.duration()*video.frameRate));
-  cp5.getController("time_line").getCaptionLabel().setPaddingX(-55);
+  //cp5.addSlider("time_line").setCaptionLabel("TIME LINE").setPosition(65, 390).setSize(155, 25).setRange(1, video.duration()*video.frameRate).setValue(1).setNumberOfTickMarks(int(video.duration()*video.frameRate));
+  //cp5.getController("time_line").getCaptionLabel().setPaddingX(-55);
+
   centerX = offsetWidth+150;
   centerY = height/2;
   rectX = (offsetWidth + width) / 2;
@@ -106,7 +109,13 @@ void draw() {
   else showHelp();  // подсказки
   drawGUI();        // выводим интерфейс
   //println(mouseX + " " + mouseY);
-  if (play) drawvideo();
+  if (play) {
+    drawvideo();
+    //time_line = int(video.time()*video.frameRate);
+  }
+  else {
+    video.jump(time_line);
+  }
 }
 
 // ===============================================================

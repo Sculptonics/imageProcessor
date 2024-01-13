@@ -139,6 +139,8 @@ void keyPressed() {
     index = constrain(index, 0, int(video.duration()*video.frameRate));
     println(index);
     cp5.getController("time_line").setValue(index);
+    video.jump(index/video.frameRate);
+    drawvideo();
   }
 }
 

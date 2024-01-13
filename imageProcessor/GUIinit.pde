@@ -58,10 +58,38 @@ void GUIinit() {
   cp5.addSlider("p_value").setCaptionLabel("VALUE").setPosition(65, 340).setSize(155, 25).setRange(2, 10).setValue(10).setNumberOfTickMarks(9);
   cp5.getController("p_value").getCaptionLabel().setPaddingX(-30);
 
-  cp5.addButton("play_video").setCaptionLabel("PLAY").setPosition(10, 390).setSize(45, 25);
-  
-  //cp5.addSlider("time_line").setCaptionLabel("TIME LINE").setPosition(65, 390).setSize(155, 25).setRange(1, video.duration()*video.frameRate).setValue(1).setNumberOfTickMarks(int(video.duration()*video.frameRate));
-  //cp5.getController("time_line").getCaptionLabel().setPaddingX(-55);
+  t1 = cp5.addToggle("play_video").setPosition(10, 390).setSize(45, 25);
+  t1.getCaptionLabel().align(CENTER, CENTER);
+
+  s1 = cp5.addSlider("time_line")
+    .setCaptionLabel("TIME LINE")
+    .setPosition(65, 390)
+    .setSize(155, 25)
+    .setRange(1, video.duration()*video.frameRate)
+    .setValue(1)
+    .setNumberOfTickMarks(int(video.duration()*video.frameRate))      
+    .setBroadcast(false)
+    .listen(true)
+    ;
+  s1.getCaptionLabel().setPaddingX(-55);
+  s1.addCallback(new CallbackListener() { //Callback for Slider
+    public void controlEvent(CallbackEvent theEvent) { 
+      if (theEvent.getAction()==ControlP5.ACTION_PRESS) {
+        println(s1.getMin(), s1.getMax(), s1.getValue(), theEvent.getController().getPointer());
+
+        // calculate the movie-position based on the mouse position
+        float x = theEvent.getController().getPointer().x();
+        float a1 = 0;
+        float a2 = s1.getWidth();
+        float b1 = s1.getMin();
+        float b2 = s1.getMax();
+        float val = map(x, a1, a2, b1, b2);
+        time_line = int(val); //
+        
+      }
+    }
+  }
+  );
 
   cp5.addSlider("result_width").setCaptionLabel("RESULT  WIDTH").setPosition(10, 460).setSize(210, 25).setRange(1, maxWidth).setValue(128).setNumberOfTickMarks(maxWidth-1).showTickMarks(false);
   cp5.getController("result_width").getCaptionLabel().setPaddingX(-65);
@@ -84,6 +112,8 @@ void GUIinit() {
     .setCaptionLabel("")
     .setText("bitmap")
     ;
+
+
 
   cp5.addButton("save_bitmap").setCaptionLabel("SAVE").setPosition(120, 620).setSize(45, 25);
   cp5.addButton("copy_clipboard").setCaptionLabel("COPY").setPosition(175, 620).setSize(45, 25);
