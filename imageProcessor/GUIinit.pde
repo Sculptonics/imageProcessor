@@ -85,7 +85,10 @@ void GUIinit() {
         float b2 = s1.getMax();
         float val = map(x, a1, a2, b1, b2);
         time_line = int(val); //
-        
+        video.jump(time_line/video.frameRate);
+        video.play();
+        drawvideo();
+        video.pause();
       }
     }
   }

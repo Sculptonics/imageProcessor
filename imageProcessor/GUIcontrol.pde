@@ -94,21 +94,13 @@ void p_value(int val) {
 void play_video(boolean t) {
   play = t;
   cp5.getController("play_video").getCaptionLabel().setText(play ? "pause":"play");
-  if (play){
+  if (play) {
     video.play();
-    }
-  else 
-    video.pause();
+  } else 
+  video.pause();
   println("play=", play);
 }
 
-void time_line(int val) {
-  index = val;
-  video.jump(index/video.frameRate);
-  drawvideo();
-  println("index=", index);
-  //changeFlag = true;
-}
 
 // ============== ENCODING ==============
 

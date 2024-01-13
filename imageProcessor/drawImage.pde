@@ -78,7 +78,7 @@ void drawImage() {
   // заливка от дисера
   if (ditherState) {
     noStroke();
-    fill(155);
+    fill(255);
     rect(0, 0, width, imgY);
     rect(0, 0, imgX, height);
   }
@@ -126,21 +126,23 @@ void drawImage() {
     rect(rectX - rectSize*resultWidth/2, rectY - rectSize*resultHeight/2, rectSize*resultWidth, rectSize*resultHeight);
   }
 }
-int index = 0;
+
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == RIGHT) {
-      index++;
+      time_line++;
       print("->");
     } else if (keyCode == LEFT) {
-      index--;
+      time_line--;
       print("<-");
     }
-    index = constrain(index, 0, int(video.duration()*video.frameRate));
-    println(index);
-    cp5.getController("time_line").setValue(index);
-    video.jump(index/video.frameRate);
+    time_line = constrain(time_line, 0, int(video.duration()*video.frameRate));
+    println(time_line);
+    cp5.getController("time_line").setValue(time_line);
+    video.jump(time_line/video.frameRate);
+    video.play();
     drawvideo();
+    //video.pause();
   }
 }
 

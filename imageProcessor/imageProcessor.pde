@@ -111,10 +111,11 @@ void draw() {
   //println(mouseX + " " + mouseY);
   if (play) {
     drawvideo();
-    //time_line = int(video.time()*video.frameRate);
+    time_line = int(video.time()*video.frameRate);
+    //cp5.getController("time_line").setValue(time_line);
   }
   else {
-    video.jump(time_line);
+
   }
 }
 
