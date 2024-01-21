@@ -1,8 +1,23 @@
 // ================ MOVE ==================
 
+void save_path_select() {
+  selectFolder("Select a folder to process:", "folderSelected");
+  //changeFlag = true;
+}
+
 void load_video() {
   selectInput("Select a file to process:", "fileSelected");
   changeFlag = true;
+}
+
+void folderSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    bitmapPath = selection.getAbsolutePath();
+    println("User selected " + bitmapPath);
+    cp5.get(Textfield.class, "name").setText(bitmapPath + "\\frames");
+  }
 }
 
 void fileSelected(File selection) {
@@ -12,8 +27,9 @@ void fileSelected(File selection) {
     videoPath = selection.getAbsolutePath();
     println("Select: " + videoPath);
     video = new Movie(this, videoPath);
-    //cp5.getController("time_line").setMax(video.duration()*video.frameRate);
-    cp5.addSlider("time_line").setCaptionLabel("TIME LINE").setPosition(65, 390).setSize(155, 25).setRange(1, video.duration()*video.frameRate).setValue(1).setNumberOfTickMarks(int(video.duration()*video.frameRate));
+    number_of_frames = int(video.duration()*video.frameRate);
+    cp5.getController("time_line").setMax(video.duration()*video.frameRate);
+    cp5.addSlider("time_line").setCaptionLabel("TIME LINE").setPosition(65, 390).setSize(155, 25).setRange(1, number_of_frames).setValue(1).setNumberOfTickMarks(int(number_of_frames));
     cp5.getController("time_line").getCaptionLabel().setPaddingX(-55);
     video.play();
     imageWidth = 256;
@@ -27,7 +43,7 @@ void fileSelected(File selection) {
 }
 
 void save_image() {
-  PImage image = loadImage(videoPath);  
+  PImage image = loadImage(bitmapPath);  
   image = filtered(image);
   image.save("outputImage.bmp");
 }
@@ -138,20 +154,28 @@ void flip_y(boolean val) {
 }
 
 String generateName(int arrayH, int arrayW) {
-  return ("_"+resultWidth+"x"+resultHeight+(dimension ? "["+ arrayH +"]["+ arrayW +"]" : "[]") + (progmem ? " PROGMEM" : "") + " = {\n");
+  return ("_"+resultWidth+"x"+resultHeight+(dimension ? "["+ arrayH +"]["+ arrayW +"]" : "[][1024]") + (progmem ? " PROGMEM" : "") + " = {\n{\n");
 }
 
+String generateUserName(boolean path) {
+  return cp5.get(Textfield.class, "name").getText();
+}
 
-void generateBitmap() {
-  String thisName = cp5.get(Textfield.class, "name").getText();
-  saveLines = "// " + thisName + ".h " + resultWidth + "x" + resultHeight;
+String generateUserName() {
+  File file = new File(cp5.get(Textfield.class, "name").getText());
+  return file.getName();
+}
+void generateBitmap(int numRows) {
+  if (first_frame) {
+    saveLines = "// " + generateUserName(true) + ".h " + resultWidth + "x" + resultHeight;
+  }
   switch (saveMode) {
-  case 0:  
-    // ==== битмап для оледов ====
-    int numRows = ceil(resultHeight / 8.0);    
-    saveLines += " 8 pix/byte OLED\n";
-    saveLines += "const uint8_t " + thisName + generateName(numRows, resultWidth);
-
+  case 0:
+    // ==== битмап для оледов ====   
+    if (first_frame) {
+      saveLines += " 8 pix/byte OLED\n";
+      saveLines += "const uint8_t " + generateUserName() + generateName(numRows, resultWidth);
+    }
     for (int r = 0; r < numRows; r++) {
       saveLines += "\t";
       if (dimension) saveLines += "{";
@@ -164,12 +188,14 @@ void generateBitmap() {
       if (dimension) saveLines += "},";
       saveLines += "\n";
     }
-    saveLines += "};";
+    saveLines += "}";
     break;
   case 1:
     // линейный битмап
-    saveLines += " 8 pix/byte\n";
-    saveLines += "const uint8_t " + thisName + generateName(resultHeight, resultWidth/8);
+    if (first_frame) {
+      saveLines += " 8 pix/byte\n";
+      saveLines += "const uint8_t " + generateUserName() + generateName(resultHeight, resultWidth/8);
+    }
     for (int h = 0; h < resultHeight; h++) {
       saveLines += "\t";
       if (dimension) saveLines += "{";
@@ -182,12 +208,14 @@ void generateBitmap() {
       if (dimension) saveLines += "},";
       saveLines += "\n";
     }
-    saveLines += "};";
+    saveLines += "}";
     break;
   case 2:
     // 1 pix/byte, BW
-    saveLines += " 1 pix/byte, BW\n";
-    saveLines += "const uint8_t " + thisName + generateName(resultHeight, resultWidth);
+    if (first_frame) {
+      saveLines += " 1 pix/byte, BW\n";
+      saveLines += "const uint8_t " + generateUserName() + generateName(resultHeight, resultWidth);
+    }
     for (int y = 0; y < resultHeight; y++) {
       saveLines += "\t";
       if (dimension) saveLines += "{";
@@ -197,12 +225,14 @@ void generateBitmap() {
       if (dimension) saveLines += "},";
       saveLines += "\n";
     }
-    saveLines += "};";
+    saveLines += "}";
     break;
   case 3:
     // ==== 1 pix/byte, Gray ====
-    saveLines += " 1 pix/byte, Gray\n";
-    saveLines += "const uint8_t " + thisName + generateName(resultHeight, resultWidth);
+    if (first_frame) {
+      saveLines += " 1 pix/byte, Gray\n";
+      saveLines += "const uint8_t " + generateUserName() + generateName(resultHeight, resultWidth);
+    }
     for (int y = 0; y < resultHeight; y++) {
       saveLines += "\t";
       if (dimension) saveLines += "{";
@@ -212,12 +242,14 @@ void generateBitmap() {
       if (dimension) saveLines += "},";
       saveLines += "\n";
     }
-    saveLines += "};";
+    saveLines += "}";
     break;
   case 4:
     // ==== rgb8 ====
-    saveLines += " rgb8\n";
-    saveLines += "const uint8_t " + thisName + generateName(resultHeight, resultWidth);
+    if (first_frame) {
+      saveLines += " rgb8\n";
+      saveLines += "const uint8_t " + generateUserName() + generateName(resultHeight, resultWidth);
+    }
     for (int y = 0; y < resultHeight; y++) {
       saveLines += "\t";
       if (dimension) saveLines += "{";
@@ -227,12 +259,14 @@ void generateBitmap() {
       if (dimension) saveLines += "},";
       saveLines += "\n";
     }
-    saveLines += "};";
+    saveLines += "}";
     break;
   case 5:
     // ==== rgb16 ====
-    saveLines += " rgb16\n";
-    saveLines += "const uint16_t " + thisName + generateName(resultHeight, resultWidth);
+    if (first_frame) {
+      saveLines += " rgb16\n";
+      saveLines += "const uint16_t " + generateUserName() + generateName(resultHeight, resultWidth);
+    }
     for (int y = 0; y < resultHeight; y++) {
       saveLines += "\t";
       if (dimension) saveLines += "{";
@@ -242,12 +276,14 @@ void generateBitmap() {
       if (dimension) saveLines += "},";
       saveLines += "\n";
     }
-    saveLines += "};";
+    saveLines += "}";
     break;
   case 6:
     // ==== rgb32 ====
-    saveLines += " rgb32\n";
-    saveLines = "const uint32_t " + thisName + generateName(resultHeight, resultWidth);
+    if (first_frame) {
+      saveLines += " rgb32\n";
+      saveLines = "const uint32_t " + generateUserName() + generateName(resultHeight, resultWidth);
+    }
     for (int y = 0; y < resultHeight; y++) {
       saveLines += "\t";
       if (dimension) saveLines += "{";
@@ -257,23 +293,26 @@ void generateBitmap() {
       if (dimension) saveLines += "},";
       saveLines += "\n";
     }
-    saveLines += "};";
+    saveLines += "}";
     break;
   }
 }
 
 void save_bitmap() {
-  generateBitmap();
-  String[] lines = new String[1];
-  lines[0] = saveLines;
-  saveStrings("bitmap.h", lines);
+  record_start(1);
 }
 
 void copy_clipboard() {
-  generateBitmap();
-  StringSelection selection = new StringSelection(saveLines);
-  Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-  clipboard.setContents(selection, selection);
+  record_start(2);
+}
+
+void record_start(int action) {
+  video.stop();
+  video.noLoop();  
+  video.play();
+  first_frame = true;
+  play = true;
+  record = action;
 }
 
 // ============== COLOR PICKERS ==============

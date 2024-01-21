@@ -1,5 +1,4 @@
 ScrollableList mode_list;
-
 void GUIinit() {
   cp5 = new ControlP5(this);  
 
@@ -65,9 +64,9 @@ void GUIinit() {
     .setCaptionLabel("TIME LINE")
     .setPosition(65, 390)
     .setSize(155, 25)
-    .setRange(1, video.duration()*video.frameRate)
+    .setRange(1, number_of_frames)
     .setValue(1)
-    .setNumberOfTickMarks(int(video.duration()*video.frameRate))      
+    .setNumberOfTickMarks(int(number_of_frames))      
     .setBroadcast(false)
     .listen(true)
     ;
@@ -76,7 +75,7 @@ void GUIinit() {
     public void controlEvent(CallbackEvent theEvent) { 
       if (theEvent.getAction()==ControlP5.ACTION_PRESS) {
         println(s1.getMin(), s1.getMax(), s1.getValue(), theEvent.getController().getPointer());
-
+        play_video(false);
         // calculate the movie-position based on the mouse position
         float x = theEvent.getController().getPointer().x();
         float a1 = 0;
@@ -85,10 +84,19 @@ void GUIinit() {
         float b2 = s1.getMax();
         float val = map(x, a1, a2, b1, b2);
         time_line = int(val); //
-        video.jump(time_line/video.frameRate);
-        video.play();
-        drawvideo();
-        video.pause();
+        videoRoutine();
+      }
+      if (theEvent.getAction()==ControlP5.ACTION_WHEEL) {
+        time_line = int(theEvent.getController().getValue());
+        time_line = constrain(time_line, 0, int(number_of_frames));
+        changeFlag = true;
+        videoRoutine();
+      }
+      if (theEvent.getAction()==ControlP5.ACTION_ENTER) {
+        adj_frame = true;
+      }
+      if (theEvent.getAction()==ControlP5.ACTION_LEAVE) {
+        adj_frame = false;
       }
     }
   }
@@ -113,13 +121,13 @@ void GUIinit() {
     .setFont(createFont("arial", 15))
     .setAutoClear(false)
     .setCaptionLabel("")
-    .setText("bitmap")
+    .setText(bitmapPath + "\\frames")
     ;
 
 
-
-  cp5.addButton("save_bitmap").setCaptionLabel("SAVE").setPosition(120, 620).setSize(45, 25);
-  cp5.addButton("copy_clipboard").setCaptionLabel("COPY").setPosition(175, 620).setSize(45, 25);
+  cp5.addButton("save_path_select").setCaptionLabel("PATH").setPosition(120, 620).setSize(30, 25);
+  cp5.addButton("save_bitmap").setCaptionLabel("SAVE").setPosition(155, 620).setSize(30, 25);
+  cp5.addButton("copy_clipboard").setCaptionLabel("COPY").setPosition(190, 620).setSize(30, 25);
 
   mode_list = cp5.addScrollableList("dropdown")
     .setCaptionLabel("OLED, 8 pix/byte, BW")
@@ -136,6 +144,7 @@ void GUIinit() {
     .addItem("1 pix/int32 (RGB888)", "drop6")
     .close()
     ;
+  mode_list.setValue(1);
   cp5.getController("dropdown").onRelease(new CallbackListener() {
     public void controlEvent(CallbackEvent ev) {
       boolean val = mode_list.isOpen();

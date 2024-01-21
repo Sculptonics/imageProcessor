@@ -37,7 +37,7 @@ int imageWidth = 100;
 int imageXoffs = 0, imageYoffs = 0;
 int imageXadd = 0, imageYadd = 0;
 int imageXresult = 0, imageYresult = 0;
-String videoPath;
+String videoPath, bitmapPath;
 int centerX;
 int centerY;
 boolean play;
@@ -76,6 +76,8 @@ int draggedX, draggedY;
 int draggedXadd, draggedYadd;
 boolean dimension = false;
 int time_line;
+int number_of_frames, record;
+boolean first_frame, adj_frame;
 
 void setup() {  
   surface.setTitle("imageProcessor v2.0");
@@ -83,18 +85,15 @@ void setup() {
   frameRate(60);
   smooth();
   noStroke();
-
-  videoPath = "D:/Documents/Processing/MovietoImage/data/cat.mov";
+  bitmapPath = "D:\\Documents\\Arduino\\Eilik";
+  videoPath = "D:\\Documents\\Processing\\MovietoImage\\data\\cat.mov";
   video = new Movie(this, videoPath);
   video.loop();
   video.play();
-  //drawvideo();
   video.read();
   imageWidth = video.width;
-  
+  number_of_frames = int(video.duration()*video.frameRate);
   GUIinit();
-  //cp5.addSlider("time_line").setCaptionLabel("TIME LINE").setPosition(65, 390).setSize(155, 25).setRange(1, video.duration()*video.frameRate).setValue(1).setNumberOfTickMarks(int(video.duration()*video.frameRate));
-  //cp5.getController("time_line").getCaptionLabel().setPaddingX(-55);
 
   centerX = offsetWidth+150;
   centerY = height/2;
@@ -113,11 +112,39 @@ void draw() {
   if (play) {
     drawvideo();
     time_line = int(video.time()*video.frameRate);
-    //cp5.getController("time_line").setValue(time_line);
-  }
-  else {
+    recording();
+  } else {
     video.pause();
   }
+}
+
+void recording(){
+  int numRows = 0;
+  if (boolean(record)) {
+      if (first_frame) numRows = ceil(resultHeight / 8.0);
+      saveLines += ",\n{";
+      generateBitmap(numRows);
+      //saveLines += "\n";
+      first_frame = false;
+      if (time_line == number_of_frames) {
+        play = false;
+        println("end");
+        saveLines += "};";
+        video.pause();
+        video.loop();
+        if (record == 1) {
+          String[] lines = new String[1];
+          lines[0] = saveLines;
+          saveStrings(generateUserName(false) + ".h", lines);
+        }
+        else {
+          StringSelection selection = new StringSelection(saveLines);
+          Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+          clipboard.setContents(selection, selection);
+        }
+        record = 0;
+      }
+    }
 }
 
 // ===============================================================

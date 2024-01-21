@@ -129,35 +129,40 @@ void drawImage() {
 }
 
 void keyPressed() {
-  if (key == CODED) {
-    if (keyCode == RIGHT) {
-      time_line++;
-      print("->");
-    } else if (keyCode == LEFT) {
-      time_line--;
-      print("<-");
+  if (adj_frame && !cp5.getController("name").isActive()){//если мышь стоит на time_line и поле ввода пути неактивно
+    if (key == CODED) {
+      if (keyCode == RIGHT) {
+        time_line++;
+        print("->");
+      } else if (keyCode == LEFT) {
+        time_line--;
+        print("<-");
+      }
+      time_line = constrain(time_line, 0, int(number_of_frames));
+      println(time_line);
+      cp5.getController("time_line").setValue(time_line);
+      videoRoutine();
     }
-    time_line = constrain(time_line, 0, int(video.duration()*video.frameRate));
-    println(time_line);
-    cp5.getController("time_line").setValue(time_line);
-    video.jump(time_line/video.frameRate);
-    video.play();
-    drawvideo();
-    //video.pause();
   }
+}
+void videoRoutine() {
+  video.jump(time_line/video.frameRate);
+  video.play();
+  drawvideo();
+  video.pause();
 }
 
 void drawvideo() {
   if (video.available()) {
     video.read();
     println("good");
-  }
-  else {println("ERROR");
-  return;
+  } else {
+    println("ERROR");
+    return;
   }
   // рисуем картинку
   videoLayer.beginDraw();
-  videoLayer.background(255);
+  videoLayer.background(0);
   videoLayer.imageMode(CENTER);
   videoLayer.pushMatrix();
   videoLayer.translate(width/2, height/2);
