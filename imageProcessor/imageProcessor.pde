@@ -65,7 +65,7 @@ int brushX;
 int brushY;
 boolean drawBrush = false;
 int imgX, imgY;
-int resultWidth, resultHeight, rectX, rectY;
+int resultWidth, resultHeight, rectX, rectY, borderW = 15, borderH = 12;
 float rectSize;
 boolean progmem = true, invert = false, flipX = false, flipY = false;
 int saveMode = 0;

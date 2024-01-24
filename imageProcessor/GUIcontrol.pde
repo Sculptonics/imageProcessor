@@ -119,10 +119,10 @@ void play_video(boolean t) {
 // ============== ENCODING ==============
 
 void result_width(int val) {
-  resultWidth = val;
+  resultWidth = 2 * (val + borderW);
 }
 void result_height(int val) {
-  resultHeight = val;
+  resultHeight = 2 * (val + borderH) ;
 }
 
 void dropdown(int val) {

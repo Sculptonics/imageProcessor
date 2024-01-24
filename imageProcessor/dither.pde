@@ -94,8 +94,8 @@ void ditherImage(PImage img) {
     }
   }
 
-  img.updatePixels();
-  image(img, 0, 0);
+  //img.updatePixels();
+  //image(img, 0, 0);
 }
 
 color find_new_color(color c, color[] palette) {

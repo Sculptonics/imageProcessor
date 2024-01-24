@@ -66,7 +66,7 @@ void drawImage() {
 
   // рисуем картинку
   hiddenLayer.beginDraw();
-  hiddenLayer.background(255);
+  hiddenLayer.background(0);
   hiddenLayer.imageMode(CENTER);
   hiddenLayer.pushMatrix();
   hiddenLayer.translate(width/2, height/2);
@@ -124,7 +124,13 @@ void drawImage() {
     noFill();
     stroke(255, 0, 0);
     strokeWeight(2);
-    rect(rectX - rectSize*resultWidth/2, rectY - rectSize*resultHeight/2, rectSize*resultWidth, rectSize*resultHeight);
+    //rect(rectX - rectSize*resultWidth/2, rectY - rectSize*resultHeight/2, rectSize*resultWidth, rectSize*resultHeight);
+    rect(rectX - rectSize*(resultWidth - 2 * borderW)/4, rectY + borderH, rectSize*resultWidth/2-borderW, rectSize*resultHeight/2-borderH);
+    
+    stroke(0, 255, 0);
+    rect(rectX - rectSize*resultWidth/2, rectY - rectSize*resultHeight/2, rectSize*resultWidth/2-borderW, rectSize*resultHeight/2-borderH);
+    stroke(0, 0, 255);
+    rect(rectX + borderW, rectY - rectSize*resultHeight/2, rectSize*resultWidth/2-borderW, rectSize*resultHeight/2-borderH);
   }
 }
 
@@ -155,9 +161,9 @@ void videoRoutine() {
 void drawvideo() {
   if (video.available()) {
     video.read();
-    println("good");
+    //println("good");
   } else {
-    println("ERROR");
+    //println("ERROR");
     return;
   }
   // рисуем картинку
@@ -173,13 +179,6 @@ void drawvideo() {
   image = videoLayer.get();
   image = filtered(image);
   //image = getFrame(video, index);
-}
-
-PImage getFrame (Movie movie, int index) {
-  movie.speed(0);
-  movie.jump(index / video.frameRate);
-  movie.read();
-  return filtered(movie.get());
 }
 
 
