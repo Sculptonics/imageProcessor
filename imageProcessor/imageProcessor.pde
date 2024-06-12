@@ -86,9 +86,11 @@ void setup() {
   smooth();
   noStroke();
   bitmapPath = "D:\\Documents\\Arduino\\Eilik";
-  videoPath = "D:\\Documents\\Processing\\MovietoImage\\data\\cat.mov";
+  //videoPath = "D:\\Documents\\Processing\\MovietoImage\\data\\cat.mov";
+  videoPath = "D:\\Documents\\Arduino\\Eilik\\Travel+1.mp4";
   video = new Movie(this, videoPath);
   video.loop();
+  video.speed(0.5);
   video.play();
   video.read();
   imageWidth = video.width;

@@ -28,9 +28,9 @@ void fileSelected(File selection) {
     println("Select: " + videoPath);
     video = new Movie(this, videoPath);
     number_of_frames = int(video.duration()*video.frameRate);
-    cp5.getController("time_line").setMax(video.duration()*video.frameRate);
-    cp5.addSlider("time_line").setCaptionLabel("TIME LINE").setPosition(65, 390).setSize(155, 25).setRange(1, number_of_frames).setValue(1).setNumberOfTickMarks(int(number_of_frames));
-    cp5.getController("time_line").getCaptionLabel().setPaddingX(-55);
+    //cp5.getController("time_line").setMax(video.duration()*video.frameRate);
+    //cp5.addSlider("time_line").setCaptionLabel("TIME LINE").setPosition(65, 390).setSize(155, 25).setRange(1, number_of_frames).setValue(1).setNumberOfTickMarks(int(number_of_frames));
+    //cp5.getController("time_line").getCaptionLabel().setPaddingX(-55);
     video.play();
     imageWidth = 256;
     image.resize(imageWidth, 0);    
@@ -308,7 +308,8 @@ void copy_clipboard() {
 
 void record_start(int action) {
   video.stop();
-  video.noLoop();  
+  video.noLoop();
+  video.speed(0.1);
   video.play();
   first_frame = true;
   play = true;
